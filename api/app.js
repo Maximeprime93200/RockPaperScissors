@@ -7,6 +7,38 @@ const app = express();
 // middleware
 app.use(express.json());
 
+/////////////////////// ROUTE FONCTION DU JEU ///////////////////////
+/////                                                           /////
+const moves = ['pierre', 'papier', 'ciseaux'];
+
+app.post("/game", (req, res) => {
+  const { move1, move2 } = req.body;
+
+  if (!moves.includes(move1) || !moves.includes(move2)) {
+    res.status(400).json({ error: "Coup invalide. Veuillez choisir entre pierre, papier ou ciseaux." });
+    return;
+  }
+
+  const result = determineWinner(move1, move2);
+  res.json({ result });
+});
+
+function determineWinner(move1, move2) {
+  if (move1 === move2) {
+    return 'Égalité !' + ' : ' + `${move1}` + ' et ' + `${move1}` + ' font match nul';
+  } else if (
+    (move1 === 'pierre' && move2 === 'ciseaux') ||
+    (move1 === 'papier' && move2 === 'pierre') ||
+    (move1 === 'ciseaux' && move2 === 'papier')
+  ) {
+    return 'Joueur 1 remporte la partie !';
+  } else {
+    return 'Joueur 2 remporte la partie !';
+  }
+}
+/////                                                           /////
+/////////////////////// ROUTE FONCTION DU JEU ///////////////////////
+
 app.use(function (req, res, next) {
   if (req.headers["accept-version"]) {
     req.api_version = req.headers["accept-version"];
