@@ -1,19 +1,18 @@
-const i18n = require("i18next");
-const path = require("path");
+function traduction(i18n){
+    return (req, res, next) => {
+        let lang = req.query.lang;
+        if (lang) {
+            i18n.setLocale(lang);
+        } else {
+            lang = i18n.getLocale();
+        }
 
-i18n.configure({
-    locales: ["en", "fr"],
-    directory: path.join(__dirname, "locales"),
-    defaultLocale: "en",
-    quertParameter: "lang",
-});
+        res.locals.__ = res.__ = function () {
+            return i18n.t.apply(i18n, arguments);
+        };
 
-function i18nMiddleware(req, res, next) {
-    i18n.init(req.res);
-    res.locals.__ = res.__ = function () {
-        return i18n.t.apply(i18n, arguments);
-    };
-    next();
+        next();
+    }
 }
 
-module.exports = i18nMiddleware;
+module.exports = traduction;

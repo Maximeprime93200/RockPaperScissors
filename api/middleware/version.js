@@ -1,6 +1,3 @@
-// Middleware pour gérer les versions de l'API
-
-// Importation des modules
 const express = require('express');
 const router = express.Router();
 
@@ -21,4 +18,3 @@ router.use((req, res, next) => {
 });
 
 module.exports = router;
-

@@ -8,8 +8,6 @@ const app = express();
 app.use(express.json());
 const validateChoice = require("./middleware/choixvalide");
 const determineWinner = require("./middleware/determineWinner");
-const formatMiddleware = require("./middleware/format");
-app.use(formatMiddleware);
 
 /////////////////////// ROUTE FONCTION DU JEU ///////////////////////
 /////                                                           /////
@@ -44,24 +42,10 @@ app.response.render = function (users) {
   });
 };
 
-// Routes
-//app.use(
-//  "/users",
-//  apiVersions({
-//    v1: require("./routes/v1/users"),
-//    v2: require("./routes/v2/users"),
-//  })
-//);
-app.use("/v1/users", require("./routes/v1/users"));
-app.use("/v2/users", require("./routes/v2/users"));
-
-app.get("/", async (req, res) => {
-  const i18next = await require("./lib/i18n");
-  console.log(i18next);
-  i18next.changeLanguage(req.headers["accept-language"]);
-  //res.send(i18next.t("Hello"));
-  //req.t("Hello {{name}}", { name: "John" });
-  //res.t("Hello {{name}}!", { name: "John" });
-});
+const traduction = require("./middleware/traduction");
+const version = require("./middleware/format");
+app.use(traduction);
+app.use(version);
+app.use("/hateoas", require("./middleware/hateoas"));
 
 module.exports = app;

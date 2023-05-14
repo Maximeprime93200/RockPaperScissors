@@ -1,19 +1,20 @@
-const i18n = require('i18n');
-const path = require('path');
+function version(options){
+    return (req, res, next) => {
+        const acceptedHeaders = req.headers["accept"];
+        const acceptedTypes = acceptedHeaders.split(",");
 
-i18n.configure({
-    locales: ['en', 'fr'],
-    directory: path.join(__dirname, 'locales'),
-    defaultLocale: 'en',
-    queryParameter: 'lang',
-});
-
-function i18nMiddleware(req, res, next) {
-    i18n.init(req, res);
-    res.locals.__ = res.__ = function () {
-        return i18n.t.apply(i18n, arguments);
-    };
-    next();
+       for (let format of acceptedTypes) {
+           if (format === "application/json") {
+               return res.json(options);
+           } else if (format === "text/csv") {
+               return res.csv(options);
+           } else if (format === "text/plain") {
+               return res.plain(options);
+           } else {
+                return res.json(options);
+              }
+        }
+    }
 }
 
-module.exports = i18nMiddleware;
+module.exports = version;
